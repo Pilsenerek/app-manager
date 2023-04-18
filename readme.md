@@ -13,7 +13,7 @@ Ensure that you have `docker`  and `docker-compose`
 # Run tests
 `docker-compose run --rm web php bin/phpunit`
 
-#Tips & tricks
+# Tips & tricks
 
 It's more handy to run command inside docker container, to go in run:
 

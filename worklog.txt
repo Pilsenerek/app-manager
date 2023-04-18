@@ -1,0 +1,43 @@
+#1 Vagrant + docker (about 0,5h)
+	- vagrant hosts: app-manager.local, test.app-manager.local, proxy.app-manager.local
+	- vagrant ports: 80, 443, 3306
+	- vagrant dir: /app
+    - docker: traefik + web + messenger + mariadb
+    - add imagick to web container
+
+#2 Application frame (about 1h)
+	- new symfony skeleton project
+	- change cache dir \App\Kernel::getCacheDir
+    - useful maker bundle: composer require symfony/maker-bundle
+    - annotations: composer require annotations
+    - .htaccess (if using apache) composer require symfony/apache-pack
+    - tests: composer require --dev symfony/test-pack, run by: bin/phpunit
+    - ORM (Doctrine): composer require --with-all-dependencies symfony/orm-pack and set credentials in .env
+    - add templates: composer require symfony/twig-bundle + bootstrap from URL
+    - example File entity & repository: make:entity
+    - update schema: doctrine:schema:update --force
+    - add serializer: composer require symfony/serializer-pack $this->container->has('serializer') -> TRUE, enable auto-serializing entities in controllers $this->json
+    - add messenger container, composer require symfony/messenger + cfg, symfony/doctrine-messenger
+    @todo
+       - boostrap from local source
+       - use messenger to implement CQRS
+
+#3 Upload a file (about 1h)
+    - entity & db
+    - forms composer require symfony/form
+    - join everyting in simple upload
+    @todo
+        - create service (with unit tests) to diminish controller
+        - add image validation (at least isImage)
+        - nicer route with return file in original name
+
+#4 Scale/convert images (about 1h)
+    - use LiipImagineBundle to scale images https://symfony.com/bundles/LiipImagineBundle/current/index.html
+    - use pure Imagick to convert image types
+    @todo
+       - use messenger to implement CQRS
+       - entity versioning (https://github.com/doctrine-extensions/DoctrineExtensions/blob/main/doc/loggable.md)
+       - status of conversion in db
+       - serve file with new & proper name, for instance test.webp -> test.webp.png
+       - rename file on disc (store history and avoid cache)
+       - join everything together (file is uploaded and then, dispatched to scale/conversion etc.)
