@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+
+    traefik:
+      image: traefik:v2.9
+      container_name: traefik
+      command:
+        - --api.insecure=true
+        - --providers.docker
+        - --entryPoints.web.address=:80
+        - --entryPoints.web-secure.address=:443
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      labels:
+        # it routes proxy.app-manager.local -> localhost:8080
+        - traefik.enable=true
+        - traefik.http.routers.traefik.rule=Host(`proxy.app-manager.local`)
+        - traefik.http.routers.traefik.entrypoints=web
+        - traefik.http.routers.traefik.service=api@internal
+        - traefik.port=80
+
+    web:
+      container_name: web
+      build:
+        context: web
+        dockerfile: Dockerfile.web
+      environment:
+        - 'COMPOSER_RUNTIME_ENV=virtualbox'
+        - 'COMPOSER_HOME=/tmp/composer'
+        - 'COMPOSER_ALLOW_SUPERUSER=1'
+      volumes:
+        - /app:/var/www/app/:delegated
+      depends_on:
+        - database
+      expose:
+        - 80
+      labels:
+        - "traefik.http.routers.web.rule=Host(`app-manager.local`)"
+
+    messenger:
+      container_name: messenger
+      build:
+        context: web
+        dockerfile: Dockerfile.web
+      volumes:
+        - /app:/var/www/app/:delegated
+      restart: always
+      depends_on:
+        - database
+      command: sh -c 'sleep 5 && php bin/console messenger:consume async -vv'
+
+    database:
+      container_name: database
+      image: mariadb:10
+      volumes:
+        - db-data:/var/lib/mysql
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: app-manager
+
+volumes:
+  db-data:

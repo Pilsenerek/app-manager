@@ -1,0 +1,26 @@
+{# templates/blog/layout.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="p-5">
+        <div class="jumbotron">
+            <h1 class="display-4">File {{ file.label }} details!</h1>
+
+            <p>Disc path: {{ file.path }}</p>
+            <p>Mime: {{ file.mime }}</p>
+            <p>Extension: {{ file.extension }}</p>
+            <p>Download: <a href="{{ path('file_src', {'id': file.id}) }}">{{ file.label }}</a></p>
+
+            <h1 class="display-4">Convert this image:</h1>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+
+            <h1 class="display-4">See how it looks like:</h1>
+            <img src="{{ path('file_src', {'id': file.id}) }}" />
+
+        </div>
+    </div>
+
+{% endblock %}

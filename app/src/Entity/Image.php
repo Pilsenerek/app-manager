@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\ImageRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: ImageRepository::class)]
+class Image
+{
+
+    public const UPLOAD_DIR = '/var/www/app/var/upload';
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $filename = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $extension = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $mime = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $label = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function getPath(): ?string
+    {
+
+        return self::UPLOAD_DIR . '/' . $this->filename[0] . '/' . $this->filename;
+    }
+
+    public function setFilename(string $filename): self
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    public function getMime(): ?string
+    {
+        return $this->mime;
+    }
+
+    public function setMime(string $mime): self
+    {
+        $this->mime = $mime;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+}

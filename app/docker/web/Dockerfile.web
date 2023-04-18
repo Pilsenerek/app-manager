@@ -1,0 +1,37 @@
+FROM phpstorm/php-apache:8.2-xdebug3.2
+
+ENV APACHE_DOCUMENT_ROOT /app/public
+
+COPY web.conf /etc/apache2/sites-available/web.conf
+
+RUN apt-get update \
+ && apt-get install -y git supervisor \
+ mc \
+ cron \
+ netcat \
+ libicu-dev \
+ libxslt-dev \
+ libc-client-dev \
+ libkrb5-dev \
+ libmagickwand-dev \
+ && a2ensite web \
+ && a2enmod rewrite \
+ && curl -sS https://getcomposer.org/installer \
+  | php -- --install-dir=/usr/local/bin --filename=composer \
+ && echo "AllowEncodedSlashes On" >> /etc/apache2/apache2.conf \
+ && rm -rf /var/lib/apt/lists/* \
+ && apt-get clean
+
+RUN printf "\n" | pecl install imagick
+RUN docker-php-ext-install -j$(nproc) pdo_mysql intl xsl
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
+
+RUN docker-php-ext-enable imagick
+
+RUN chmod 0777 /var/log
+RUN mkdir /var/www/app/var/upload
+RUN chmod 0777 /var/www/app/var/upload
+
+WORKDIR /var/www/app
