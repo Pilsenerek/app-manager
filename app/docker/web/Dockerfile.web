@@ -31,7 +31,7 @@ RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
 RUN docker-php-ext-enable imagick
 
 RUN chmod 0777 /var/log
-RUN mkdir /var/www/app/var/upload
+RUN mkdir -p /var/www/app/var/upload
 RUN chmod 0777 /var/www/app/var/upload
 
 WORKDIR /var/www/app

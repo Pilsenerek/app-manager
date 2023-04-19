@@ -10,16 +10,36 @@
             <p>Disc path: {{ file.path }}</p>
             <p>Mime: {{ file.mime }}</p>
             <p>Extension: {{ file.extension }}</p>
-            <p>Download: <a href="{{ path('file_src', {'id': file.id}) }}">{{ file.label }}</a></p>
+            <p>Download: <a href="{{ path('file_src', {'id': file.id, 'name': file.label}) }}">{{ file.label }}</a></p>
 
-            <h1 class="display-4">Convert this image:</h1>
-            {{ form_start(form) }}
-            {{ form_widget(form) }}
-            {{ form_end(form) }}
+            <h2 class="display-6">See how it looks like</h2>
+            <img src="{{ path('file_src', {'id': file.id, 'name': file.label}) }}" />
 
-            <h1 class="display-4">See how it looks like:</h1>
-            <img src="{{ path('file_src', {'id': file.id}) }}" />
-
+            <h2 class="display-6 pt-5">Changes history</h2>
+            {% if history is not empty %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Discname</th>
+                            <th>Extension</th>
+                            <th>Mime</th>
+                            <th>Label</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for entry in history %}
+                        <tr>
+                            <td><a href="{{ path('file_name', {'name': entry.data.filename})  }}">{{ entry.data.filename }}</a></td>
+                            <td>{% if entry.data.extension is defined %}{{ entry.data.extension }}{% endif %}</td>
+                            <td>{% if entry.data.mime is defined %}{{ entry.data.mime }}{% endif %}</td>
+                            <td>{% if entry.data.label is defined %}{{ entry.data.label }}{% endif %}</td>
+                            <td>{{ entry.loggedAt|date('Y-m-d H:i:s') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
     </div>
 

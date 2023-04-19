@@ -1,0 +1,11 @@
+# services to handle doctrine extensions
+# import it in config/packages/doctrine_extensions.yaml
+services:
+    # Doctrine Extension listeners to handle behaviors
+
+    Gedmo\Loggable\LoggableListener:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+

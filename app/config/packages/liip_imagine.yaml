@@ -6,14 +6,9 @@ liip_imagine:
     loaders:
         default:
             filesystem:
-                data_root: "%kernel.project_dir%/var"
+                data_root: "/"
 
     filter_sets:
         cache: ~
-        thumbnail_xs:
-            filters:
-                thumbnail: { size: [100, 100], mode: outbound }
-
-        thumbnail_m:
-            filters:
-                thumbnail: { size: [250, 250], mode: outbound }
+        thumbnail:
+            #provided in runtime
